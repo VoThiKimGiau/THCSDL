@@ -1,0 +1,615 @@
+﻿CREATE DATABASE QL_CuaHangTienLoi
+
+USE QL_CuaHangTienLoi
+
+
+CREATE TABLE NHANVIEN
+(
+	MANV CHAR(5) NOT NULL,
+	TENNV NVARCHAR(30) NOT NULL,
+	SDT CHAR(10),
+	NAMSINH DATE,
+	GIOITINH NVARCHAR(3),
+	CONSTRAINT PK_NHANVIEN PRIMARY KEY (MANV)
+)
+
+
+CREATE TABLE NHANTHAN
+(
+	MANV CHAR(5) NOT NULL,
+	TENNT NVARCHAR(30) NOT NULL,
+	SDT CHAR(10),
+	QUANHE NVARCHAR(10),
+	CONSTRAINT PK_NHANTHAN PRIMARY KEY (MANV, TENNT),
+	CONSTRAINT FK_NHANTHAN_MANV FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV)
+)
+
+
+CREATE TABLE KHACHHANG 
+(
+MAKH CHAR(5),
+TENKH NVARCHAR(30),
+SDT CHAR(10),
+CONSTRAINT PK_KHACHHANG PRIMARY KEY (MAKH)
+)
+
+CREATE TABLE SANPHAM 
+(
+MASP CHAR(5),
+TENSP NVARCHAR(40),
+DVT NVARCHAR(10),
+DONGIA FLOAT,
+CONSTRAINT PK_SANPHAM PRIMARY KEY (MASP)
+)
+
+
+CREATE TABLE NHACUNGCAP
+(
+MANCC CHAR(5),
+MASP CHAR(5),
+TENNCC NVARCHAR(50),
+SLNHAP INT,
+TONGTIENNHAP FLOAT,
+CONSTRAINT PK_NHACCUNGCAP PRIMARY KEY (MANCC, MASP),
+CONSTRAINT FK_NHACCUNGCAP_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM(MASP)
+)
+
+
+CREATE TABLE CALAM
+(
+MACA CHAR(5),
+MANV CHAR(5),
+VAOLAM INT,
+TANLAM INT,
+LUONG1CA FLOAT,
+CONSTRAINT PK_CALAM PRIMARY KEY (MACA, MANV),
+CONSTRAINT FK_CALAM_MANV FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV)
+)
+
+CREATE TABLE LUONG
+(
+MACA CHAR(5),
+MANV CHAR(5),
+SONGAYLAM INT,
+CONSTRAINT PK_LUONG PRIMARY KEY (MACA, MANV),
+CONSTRAINT FK_LUONG_MACA_MANV FOREIGN KEY (MACA, MANV) REFERENCES CALAM(MACA, MANV)
+)
+
+
+CREATE TABLE KHO
+(
+MASP CHAR(5),
+SOLUONGCON INT,
+CONSTRAINT PK_KHO PRIMARY KEY (MASP),
+CONSTRAINT FK_KHO_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM(MASP)
+)
+
+
+CREATE TABLE HOADON
+(
+MAHD CHAR(5),
+MANV CHAR(5),
+MASP CHAR(5),
+MAKH CHAR(5),
+SOLUONG INT,
+THANHTIEN INT,
+MAPT CHAR(5),
+TIENNHAN INT,
+TIENTHUA INT,
+THOIGIANNHAN TIME,
+CONSTRAINT PK_HOADON PRIMARY KEY (MAHD),
+CONSTRAINT FK_HOADON_MANV  FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV),
+CONSTRAINT FK_HOADON_MASP  FOREIGN KEY (MASP) REFERENCES SANPHAM(MASP),
+CONSTRAINT FK_HOADON_MAKH  FOREIGN KEY (MAKH) REFERENCES KHACHHANG(MAKH),
+CONSTRAINT FK_HOADON_MAPT FOREIGN KEY (MAPT) REFERENCES PTTT(MAPT)
+)
+
+
+CREATE TABLE PTTT
+(
+MAPT CHAR(5),
+TENPT NVARCHAR(15),
+CONSTRAINT PK_PTTT PRIMARY KEY (MAPT)
+)
+
+
+
+INSERT INTO NHANVIEN(MANV, TENNV, SDT, NAMSINH, GIOITINH) VALUES
+('NV001', N'Dương Thúy Kiều', '0987654321', '2000-10-19', N'Nữ'),
+('NV002', N'Huỳnh Tuấn Tú', '0723456789', '2001-05-09', 'Nam'),
+('NV003', N'Trần Thành Công', '0992384237' , '2002-11-10', 'Nam'),
+('NV004', N'Nguyễn Minh Hiếu', '0948235938', '2003-04-15', 'Nam'),
+('NV005', N'Võ Mỹ Tâm', '0213465098', '2003-12-22', N'Nữ'),
+('NV006', N'Hồ Như Quỳnh', '0852741924', '1999-09-10', N'Nữ'),
+('NV007', N'Hoàng Văn Tân', '0971446422', '1994-12-05', 'Nam'),
+('NV008', N'Trương Gia Huỳnh', '0978457364', '2000-02-15', N'Nữ'),
+('NV009', N'Lâm Văn Hòa', '0874635374', '1996-09-01', 'Nam'),
+('NV010', N'Nguyễn Thị Hoa', '0765849742', '1999-06-18', N'Nữ')
+
+
+INSERT INTO NHANTHAN(MANV, TENNT, SDT, QUANHE) VALUES
+('NV003', N'Trần Hoài Long', '0986754312',  'Anh'),
+('NV005', N'Trương Bích Tuyền', '0879645321',  N'Mẹ'),
+('NV003', N'Trần Trọng Trường', '0978652143',  'Ba'),
+('NV002', N'Huỳnh Thị Ngọc Huyền', '0786924813',  N'Chị'),
+('NV001', N'Dương Hoài Bảo', '0799834725',  'Anh'),
+('NV010', N'Nguyễn Thị Hòa', '0839573831',  N'Chị'),
+('NV009', N'Lâm Thanh', '0493058462',  N'Chú'),
+('NV007', N'Nguyễn Ngọc Nguyên', '0746274859',  N'Mẹ')
+
+
+INSERT INTO CALAM(MACA, MANV, VAOLAM, TANLAM, LUONG1CA) VALUES
+('CAP01', 'NV001', '6', '10',  '92000'), -- CAP01 1h: 23k
+('CAP02', 'NV004', '10', '14', '92000'), -- CAP02 1h: 23k
+('CAP03', 'NV005', '14', '18',  '92000'), -- CAP03 1h: 23k
+('CAP04', 'NV005', '18', '22',  '108000'), -- CAP04 1h: 27k
+('CAF01', 'NV002', '6', '14',  '296000'), -- CAF01 1h: 37k
+('CAF02', 'NV003', '14', '22',  '296000'), -- CAF02 1h: 37k
+('CAF03', 'NV006', '22', '6',  '344000'), -- CAF03 1h: 43k
+('CAF01', 'NV006', '6', '14',  '296000'),
+('CAP03', 'NV007', '14', '18',  '92000'),
+('CAF01', 'NV007', '6', '14',  '296000'),
+('CAP02', 'NV008', '10', '14',  '92000'),
+('CAF03', 'NV009', '22', '6',  '344000'),
+('CAF02', 'NV009', '14', '22',  '296000'),
+('CAP01', 'NV010', '6', '10',  '92000')
+
+
+INSERT INTO KHACHHANG(MAKH, TENKH, SDT) VALUES
+('KH001', N'Huỳnh Thị Trinh', '0992438501'),
+('KH002', N'Hoàng Văn Tuấn', '0734825984'),
+('KH003', N'Nguyễn Thùy Linh',  '0857234592'),
+('KH004', N'Võ Thị Phương Thúy',  '0394385259'),
+('KH005', N'Cao Hoài Nam',   '0284393293'),
+('KH006', N'Nguyễn Văn Toàn', '0857346572'),
+('KH007', N'Trần Thị Thu Hoài', '0837519384')
+
+
+INSERT INTO SANPHAM(MASP, TENSP, DVT, DONGIA) VALUES
+('SP009', N'Sữa Binggrae chuối 200ml', N'Hộp', '18500'),
+('SP825', N'Nước khoáng Lavie 350ml', N'Chai', '5300'),
+('SP284', N'Nước ngọt Coca-Cola 330ml',  N'Lon', '9000'),
+('SP023', N'Mì hảo hảo tôm chua cay 75g', N'Gói', '4500'),
+('SP129', N'Bánh socola KitKat 35g', N'Thanh', '18000'),
+('SP841', N'Snack BBQ Brazil Lay''s gói 95g', N'Bịch', '21500'),
+('SP523', N'Trà sữa Đài Loan C2 280ml', N'Chai', '11500')
+
+
+INSERT INTO NHACUNGCAP(MANCC, MASP, TENNCC, SLNHAP, TONGTIENNHAP) VALUES
+('NCC23', 'SP009', 'Misukitchen', '10', '3800000'), -- Thùng 24 hộp 380.000
+('NCC34', 'SP825', 'LaVie', '10', '1000000'), -- Thùng 24 chai  100.000
+('NCC02', 'SP284', 'nuocsuoichinhhangducphat.com', '8', '1600000'), -- Thùng 24 lon 200.000
+('NCC91', 'SP023', 'OKFOOD', '6', '780000'), -- Thùng 30 gói 130.000
+('NCC19', 'SP129', N'Suadevondale Sỉ và Lẽ.shop',   '8', '2792000'), -- Hộp 24 thanh 349.000
+('NCC57', 'SP841', 'Gotime Mart', '150', '3150000'), -- Gói 21.000
+('NCC09', 'SP523', N'Nhà Phân Phối Bách Khoa', '7', '1484000') -- Thùng 24 chai 212.000
+
+
+INSERT INTO LUONG(MANV, MACA, SONGAYLAM) VALUES
+('NV001', 'CAP01', '28'),
+('NV002', 'CAF01', '29'),
+('NV003', 'CAF02', '28'),
+('NV004', 'CAP02', '30'),
+('NV005', 'CAP03', '29'),
+('NV005', 'CAP04', '5'),
+('NV006', 'CAF03', '10'),
+('NV006', 'CAF01', '19'),
+('NV007', 'CAP03', '6'),
+('NV007', 'CAF01', '20'),
+('NV008', 'CAP02', '27'),
+('NV009', 'CAF03', '6'),
+('NV009', 'CAF02', '23'),
+('NV010', 'CAP01', '29')
+
+
+INSERT INTO KHO(MASP, SOLUONGCON) VALUES
+('SP009', '70'), -- Hộp
+('SP825', '40'), -- Chai
+('SP129', '42'), -- Thanh
+('SP284', '12'), -- Lon
+('SP023', '80'), -- Gói
+('SP841', '30'), -- Gói
+('SP523', '58') -- Chai
+
+
+INSERT INTO PTTT(MAPT, TENPT) VALUES
+('PT001', 'Banking'),
+('PT002', N'Tiền mặt'),
+('PT003', N'Quẹt thẻ')
+
+
+-- CÓ THỂ CÀI DEFAUL TIỀN THỪA CỦA BANKING VỚI QUẸT THẺ = 0
+INSERT INTO HOADON(MAHD, MANV, MASP, MAKH, MAPT, TIENNHAN, TIENTHUA, THOIGIANNHAN, SOLUONG, THANHTIEN) VALUES
+('HD001', 'NV004', 'SP009','KH001', 'PT001', '37000', '0', '12:30:23', '2', '37000'),
+('HD002', 'NV002', 'SP129','KH002', 'PT002', '20000', '2000', '13:00:43', '1', '18000'),
+('HD004', 'NV010', 'SP023','KH004', 'PT001', '225000', '0', '11:30:41', '5', '22500'),
+('HD006', 'NV001', 'SP841','KH007', 'PT002', '80000', '15500', '8:34:43', '3', '64500'),
+('HD003', 'NV009', 'SP825','KH003', 'PT003', '26500', '0', '15:30:41', '5', '26500'),
+('HD007', 'NV003', 'SP523','KH006', 'PT002', '30000', '7000', '20:24:43', '2', '23000'),
+('HD005', 'NV005', 'SP284','KH005', 'PT003', '18000', '0', '21:30:41', '2', '18000'),
+('HD008', 'NV007', 'SP009','KH003', 'PT002', '200000', '89000', '17:59:43', '6', '111000')
+
+
+ALTER TABLE NHANVIEN
+ADD CONSTRAINT UNI_MANV UNIQUE (MANV)
+
+ALTER TABLE SANPHAM
+ADD CONSTRAINT UNI_MASP UNIQUE (MASP)
+
+ALTER TABLE HOADON
+ADD CONSTRAINT UNI_MAHD UNIQUE (MAHD)
+
+ALTER TABLE KHACHHANG
+ADD CONSTRAINT UNI_MAKH UNIQUE (MAKH)
+
+ALTER TABLE PTTT
+ADD CONSTRAINT UNI_MAPT UNIQUE (MAPT)
+
+
+-- Check sđt là số bao gồm 10 chữ số
+ALTER TABLE NHANVIEN
+ADD CONSTRAINT CK_NHANVIEN_SDT CHECK (SDT LIKE '0[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+
+ALTER TABLE NHANTHAN
+ADD CONSTRAINT CK_NHANTHAN_SDT CHECK (SDT LIKE '0[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+
+ALTER TABLE KHACHHANG
+ADD CONSTRAINT CK_KHACHHANG_SDT CHECK (SDT LIKE '0[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+
+-- Check giới tính có 2 giá trị nam hoặc nữ
+ALTER TABLE NHANVIEN
+ADD CONSTRAINT CK_NHANVIEN_GioiTinh CHECK (GIOITINH IN ('Nam', N'Nữ'));
+
+
+
+--------------------------------------------------------------------
+-- 2001210856 - Huỳnh Thị Thanh Vân
+
+-- Cho biết nhân viên có năm sinh 2003 và có giới tính là nữ
+SELECT MANV, TENNV
+FROM NHANVIEN
+WHERE YEAR(NAMSINH) = 2003 AND GIOITINH = N'Nữ'
+
+-- Cho biết khách hàng có sđt 0992438501 và tên KH là Huỳnh Thị Trinh
+SELECT TENKH, SDT
+FROM KHACHHANG
+WHERE SDT = '0992438501' AND TENKH = N'Huỳnh Thị Trinh' 
+
+-- Tính tổng số lượnng còn trong kho
+SELECT SUM(SOLUONGCON) AS SLCONTRONGKHO
+FROM KHO
+
+-- Liệt kê những hóa đơn có sản phẩm có mã HD001 và sắp xếp thứ tự tăng dần
+SELECT DISTINCT (HOADON.MAHD), (SANPHAM.TENSP), DVT
+FROM HOADON, SANPHAM
+WHERE HOADON.MASP = SANPHAM.MASP AND HOADON.MAHD ='HD001'
+ORDER BY DVT ASC
+
+-- Liệt kê sản phẩm có đơn giá > 3500
+SELECT * FROM SANPHAM
+WHERE DONGIA > 3500
+
+-- Cho biết sản phẩm nào (MASP, TENSP) có dvt là hộp
+SELECT MASP, TENSP
+FROM SANPHAM
+WHERE DVT = N'Hộp' (SELECT DVT FROM SANPHAM)
+
+--Nhân viên có ngày làm trung bình 
+SELECT NHANVIEN.MANV,TENNV,AVG(LUONG.SONGAYLAM) AS'NGAY LAM TRUNG BINH'
+FROM NHANVIEN,LUONG
+WHERE NHANVIEN.MANV=LUONG.MANV
+GROUP BY NHANVIEN.MANV,TENNV
+
+-- Đếm số lượng sản phẩm
+SELECT SANPHAM.MASP, NHACUNGCAP.TENNCC, COUNT(SANPHAM.MASP) AS 'SO LUONG SAN PHAM'
+FROM SANPHAM, NHACUNGCAP
+WHERE SANPHAM.MASP = NHACUNGCAP.MASP
+GROUP BY SANPHAM.MASP, NHACUNGCAP.TENNCC
+HAVING COUNT (SANPHAM.MASP) >= 2
+ORDER BY MASP, TENNCC
+
+-- Xuất nhân viên có số ngày làm > 24
+SELECT NHANVIEN.MANV,SUM(SONGAYLAM) AS Tong_L
+FROM NHANVIEN, LUONG
+WHERE NHANVIEN.MANV = LUONG.MANV
+GROUP BY NHANVIEN.MANV
+HAVING SUM(SONGAYLAM) >= 24
+ORDER BY Tong_L DESC
+
+
+-------------------------Trigger---------------------------
+CREATE TRIGGER trg_trigger1
+ON HOADON
+AFTER UPDATE, INSERT
+AS
+BEGIN
+   DECLARE @SP_TT INT;
+   SET @SP_TT = (SELECT THANHTIEN FROM HOADON)
+   IF (@SP_TT > 0)
+   BEGIN
+		RAISERROR(N'Sản phẩm thanh toán không được vượt quá số lượng trong kho!',16,1)
+		END 
+END
+
+
+CREATE TRIGGER trg_trigger2
+ON KHO
+AFTER UPDATE, INSERT
+AS
+BEGIN
+   DECLARE @SL_C INT;
+   SET @SL_C = (SELECT SOLUONGCON FROM KHO)
+   IF (@SL_C > 0)
+   BEGIN
+   RAISERROR (N'Số lượng sản phẩm không được âm', 16,1)
+   END
+END
+
+
+-- trigger DELETE                                       
+CREATE TRIGGER trg_trigger3
+ON SANPHAM
+FOR DELETE
+AS
+BEGIN
+DELETE FROM KHO WHERE MASP IN (SELECT MASP FROM deleted)
+END
+
+
+--------------------------------------------------------------------
+-- 2001210714 - Võ Thị Kim Giàu
+
+-- Trigger insert, update
+
+-- Trigger tiền lương không được bé hơn bằng 0 trên bảng lương
+CREATE TRIGGER LuongKhongAm
+ON LUONG
+FOR INSERT, UPDATE
+AS
+BEGIN
+IF EXISTS (
+SELECT *
+FROM inserted i
+INNER JOIN (
+SELECT i.MANV, i.MACA, LUONG1CA * SONGAYLAM AS Luong
+FROM CALAM c
+INNER JOIN inserted i ON c.MANV = i.MANV AND c.MACA = i.MACA
+) t ON i.MANV = t.MANV AND i.MACA = t.MACA
+WHERE t.Luong <= 0
+)
+BEGIN
+RAISERROR(N'Lương không dược bé hơn bằng 0', 16, 1);
+ROLLBACK TRANSACTION;
+END
+END
+
+update LUONG
+set SONGAYLAM = -1
+where MANV = 'NV001'
+
+-- Trigger tiền thừa không được bé hơn 0 trên bảng hóa đơn
+CREATE TRIGGER TienThua
+ON HOADON
+FOR INSERT, UPDATE
+AS
+BEGIN
+IF EXISTS(
+SELECT TIENTHUA
+FROM inserted i
+WHERE TIENTHUA < 0
+)
+BEGIN
+RAISERROR(N'Tiền thừa không được bé hơn 0', 16, 1);
+ROLLBACK TRANSACTION;
+END
+END
+
+update HOADON
+set TIENTHUA = -1
+where MAHD = 'HD001'
+
+
+-- Sử dụng where, order by
+
+-- Xuất mã sản phẩm, tên sản phẩm, số lượng còn, đơn vị tính của sản phẩm có đơn vị tính là bịch và số lượng còn < 10
+-- Hoặc có đơn vị tính là chai và số lượng còn < 20. Xếp tăng theo số lượng còn
+select SANPHAM.MASP, TENSP, SOLUONGCON, DVT
+from SANPHAM join KHO on SANPHAM.MASP = KHO.MASP
+where DVT = N'Bịch' and SOLUONGCON < 10 or DVT = 'Chai' and SOLUONGCON < 20
+order by SOLUONGCON
+
+-- Xuất tên khách hàng, mã hợp đồng, tên sản phẩm, số lượng, thành tiền của hóa đơn có thành tiền lớn hơn 50000
+-- Xếp giảm dần theo thành tiền
+select TENKH, MAHD, TENSP, SOLUONG, THANHTIEN
+from (KHACHHANG join HOADON on KHACHHANG.MAKH = HOADON.MAKH)
+join SANPHAM on HOADON.MASP = SANPHAM.MASP
+where THANHTIEN > 50000
+order by THANHTIEN desc
+
+
+--Sử dụng aggreate function, group by, having, where và order by
+
+-- Xuất mã nhân viên, tên nhân viên, trung bình lương của nhân viên nữ làm ca có mã = CAP01
+select NHANVIEN.MANV, TENNV, AVG(LUONG1CA * SONGAYLAM) as TB_Luong
+from NHANVIEN join LUONG on NHANVIEN.MANV = LUONG.MANV join CALAM on CALAM.MACA = LUONG.MACA
+where LUONG.MACA = 'CAP01'
+group by NHANVIEN.MANV, TENNV, GIOITINH
+having GIOITINH = N'Nữ'
+order by TB_Luong desc
+
+--------------------------------------------------------------------
+-- 2001210924 - Mai Thế Vinh
+--********************************************CÂU 3 - A**************************************************
+-- Trigger 1
+CREATE TRIGGER Check_SoLuongNhap_TongTienNhap
+ON NHACUNGCAP
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    IF EXISTS (SELECT * FROM inserted WHERE SLNHAP <= 0 OR TONGTIENNHAP <= 0)
+    BEGIN
+        RAISERROR (N'Số lượng nhập và tổng tiền nhập phải lớn hơn 0', 16, 1)
+        ROLLBACK TRANSACTION
+        RETURN
+    END
+END
+
+update NHACUNGCAP
+set SLNHAP = -1
+where MANCC = 'NCC19'
+
+-- Trigger 2
+CREATE TRIGGER Check_GiaTien
+ON SANPHAM
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    IF EXISTS (SELECT * FROM inserted WHERE DONGIA <= 0)
+    BEGIN
+        RAISERROR (N'Giá tiền phải lớn hơn 0', 16, 1)
+        ROLLBACK TRANSACTION
+        RETURN
+    END
+END
+
+update SANPHAM
+set DONGIA = -1
+where MASP = 'SP009'
+
+
+---- Trigger delete PTTT
+CREATE TRIGGER tr_Delete_Pttt
+ON PTTT
+FOR DELETE
+AS
+BEGIN
+DELETE FROM HOADON WHERE MAPT IN (SELECT MAPT FROM deleted)
+END
+
+
+--********************************************CÂU 3-D**************************************************
+--Xuất tên nhà cung cấp và tên sản phẩm
+SELECT TENNCC, TENSP FROM SANPHAM,NHACUNGCAP
+WHERE SANPHAM.MASP = NHACUNGCAP.MASP
+ORDER BY TENNCC ASC
+
+--Xuất thông tin nhân viên và lương 
+SELECT * FROM NHANVIEN, NHANTHAN, LUONG, CALAM
+WHERE NHANVIEN.MANV = NHANTHAN.MANV AND NHANVIEN.MANV = LUONG.MANV AND NHANVIEN.MANV = CALAM.MANV
+ORDER BY NHANVIEN.TENNV ASC
+
+-- Xuất mã khách hàng và tổng số tiền khách hàng đã trả khi số lượng > 2
+SELECT KHACHHANG.MAKH,SUM(THANHTIEN) AS Tong_TT
+FROM KHACHHANG, HOADON
+WHERE KHACHHANG.MAKH = HOADON.MAKH
+GROUP BY KHACHHANG.MAKH
+HAVING SUM(SOLUONG) >= 2
+ORDER BY Tong_TT DESC
+
+--------------------------------------------------------------------
+-- 2001215705 - Nguyễn Hữu Đạt
+
+-- Số lượng và thành tiền không được nhỏ hơn bằng 0
+CREATE TRIGGER trigger_check_quantity
+ON HOADON
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT *
+        FROM inserted
+        WHERE SOLUONG <= 0 OR THANHTIEN <= 0
+    )
+    BEGIN
+        RAISERROR('Số lượng và thành tiền phải lớn hơn 0.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+END
+
+update HOADON
+set SOLUONG = -1
+where MAHD = 'HD001'
+
+-- Khi xóa 1 nhân viên, trigger này sẽ xóa tát cả các nhân thân có cùng MANV với nhân viên bị xóa
+CREATE TRIGGER XOA_NHANTHAN 
+ON NHANVIEN
+FOR DELETE AS BEGIN DELETE FROM NHANTHAN 
+WHERE MANV IN (SELECT MANV FROM DELETED) END
+
+-- Xuất ra tên, sdt, năm sinh của nhân viên có giới tính là nữ và năm sinh lớn hơn 2000
+SELECT TENNV, SDT, NAMSINH
+FROM NHANVIEN
+WHERE GIOITINH = N'Nữ' AND YEAR(NAMSINH) > 2000
+ORDER BY TENNV ASC
+
+-- Xuất ra tên, sdt, năm sinh của nhân viên có giới tính là nam và năm sinh lớn hơn 1990 
+SELECT TENNV, SDT, NAMSINH
+FROM NHANVIEN
+WHERE GIOITINH = N'Nam' AND YEAR(NAMSINH) > 1990
+ORDER BY TENNV ASC
+
+-- Xuất ra mã nv và họ tên nhân viên có nhân thân từ 2 người trở lên
+SELECT NHANVIEN.MANV, TENNV, COUNT(TENNT) AS TONG_SO_NHAN_THAN
+FROM NHANVIEN 
+JOIN NHANTHAN ON NHANVIEN.MANV = NHANTHAN.MANV
+GROUP BY NHANVIEN.MANV, TENNV
+HAVING COUNT(TENNT) >= 2
+ORDER BY TONG_SO_NHAN_THAN DESC
+
+--------------------------------------------------------------------
+-- 2001210224 - Nguyễn Hữu Thông
+
+CREATE TRIGGER KTra_tuoi
+ON NHANVIEN
+AFTER INSERT, UPDATE
+AS
+BEGIN
+  IF EXISTS (
+    SELECT * FROM inserted WHERE DATEDIFF(YEAR, NAMSINH, GETDATE()) < 18
+  )
+  BEGIN
+    RAISERROR(N'Không đủ 18 tuổi', 16, 1)
+    ROLLBACK TRANSACTION
+  END
+END
+
+insert into NHANVIEN(MANV,TENNV,NAMSINH) values ('NV099', N'Nguyễn Văn A ', '2000-09-01')
+insert into NHANVIEN(MANV,TENNV,NAMSINH) values ('NV100', N'Nguyễn Văn B ', '2015-09-01')
+
+CREATE TRIGGER KTra_TienNhan
+ON HOADON
+AFTER INSERT, UPDATE
+AS
+BEGIN
+  IF EXISTS (
+    SELECT * FROM inserted WHERE TIENNHAN <= 0
+  )
+  BEGIN
+    RAISERROR(N'Tiền nhận nhỏ hơn 0.', 16, 1)
+    ROLLBACK TRANSACTION
+  END
+END
+
+update HOADON
+SET TIENNHAN = -10000
+WHERE MAHD='HD001'
+
+update HOADON
+SET TIENNHAN = 9999
+WHERE MAHD='HD002'
+
+select *
+from KHO
+order by SOLUONGCON desc
+
+select MAPT, Count(*) as So_Luong
+from HOADON
+group by MAPT
+
+select TENPT,THANHTIEN
+from HOADON HD JOIN PTTT P ON HD.MAPT=P.MAPT
+where soLuong > 3
